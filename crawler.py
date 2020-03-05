@@ -17,6 +17,8 @@ class TwitterListener(tweepy.StreamListener):
             print(data)
             with open(fetched_tweets_filename, 'a') as tf:
                 tf.write(data)
+                tf.write(",")
+                #store(self,data)
             return True
         except BaseException as e:
             print('Error on data: %s' %str(e))
@@ -28,24 +30,30 @@ class TwitterListener(tweepy.StreamListener):
             return False
         print(status_code)
 
+    def store(self,data):
+        t=json.loads(data)
+        return t
+
+
 
 class Streamer():
     def __init__(self):
         self.authenticator = Authenticator()
-    def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
+    def stream_tweets(self, fetched_tweets_filename, hash_tag_list, mining_time):
         auth = self.authenticator.authenticate_twitter()
         listener = TwitterListener(api=tweepy.API(auth, wait_on_rate_limit=True,wait_on_rate_limit_notify=True,parser=tweepy.parsers.JSONParser()))
         stream = tweepy.Stream(auth,  listener)
         stream.filter(track=hash_tag_list, is_async=True)
-        time.sleep(5)
+        time.sleep(mining_time)
         stream.disconnect()
-        # stream.sample()
 
 
 
 if __name__ == '__main__':
-    hash_tag_list = ["nba"]
+    # hash_tag_list = ["nba",'raptors','lakers','warriors','bucks','stephen curry','lebron james']
+    hash_tag_list = ['coronavirus']
     fetched_tweets_filename = "tweets_streaming.json"
+    mining_time = 10
 
     streamer = Streamer()
-    streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    streamer.stream_tweets(fetched_tweets_filename, hash_tag_list, mining_time)
