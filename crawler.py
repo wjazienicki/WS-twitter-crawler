@@ -1,6 +1,6 @@
 import credentials
-
 import tweepy
+import time
 
 
 class Authenticator():
@@ -12,9 +12,6 @@ class Authenticator():
     
  
 class TwitterListener(tweepy.StreamListener):
-    
-
-
     def on_data(self, data):
         try:
             print(data)
@@ -26,6 +23,9 @@ class TwitterListener(tweepy.StreamListener):
         return True
 
     def on_error(self, status_code):
+        if status_code == 420:
+            print("error 420")
+            return False
         print(status_code)
 
 
@@ -33,10 +33,13 @@ class Streamer():
     def __init__(self):
         self.authenticator = Authenticator()
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
-        listener = TwitterListener()
         auth = self.authenticator.authenticate_twitter()
+        listener = TwitterListener(api=tweepy.API(auth, wait_on_rate_limit=True,wait_on_rate_limit_notify=True,parser=tweepy.parsers.JSONParser()))
         stream = tweepy.Stream(auth,  listener)
-        stream.filter(track=hash_tag_list)
+        stream.filter(track=hash_tag_list, is_async=True)
+        time.sleep(5)
+        stream.disconnect()
+        # stream.sample()
 
 
 
