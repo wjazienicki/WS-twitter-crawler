@@ -7,10 +7,11 @@ myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient['WebScience']
 mycol = mydb['tweets']
 
-with open('tweets_streaming.json') as f:
-    file_data = json.load(f)
+myquery = { id : "1235688967976214529"}
 
-mycol.insert_many(file_data)
+mydoc = mycol.find(myquery)
+for x in mydoc:
+    print(x)
 
 
 

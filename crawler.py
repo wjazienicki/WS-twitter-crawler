@@ -1,8 +1,11 @@
 import credentials
 import tweepy
 import time
+import pymongo
+import json
+from bson import BSON
 
-
+#this class handles authenatication for twitter API
 class Authenticator():
     def authenticate_twitter(self):
         auth = tweepy.OAuthHandler(credentials.CONSUMER_KEY,credentials.CONSUMER_KEY_SECRET)
@@ -12,16 +15,26 @@ class Authenticator():
     
  
 class TwitterListener(tweepy.StreamListener):
+
     def on_data(self, data):
         try:
-            print(data)
-            with open(fetched_tweets_filename, 'a') as tf:
-                tf.write(data)
-                tf.write(",")
-                #store(self,data)
-            return True
+            #connect to MongoDB
+            client = pymongo.MongoClient("mongodb://localhost:27017/")
+
+            #use database
+            db = client["AE"]
+
+            #decode the json data from twitter
+            datajson = json.loads(data)
+            
+            #print the data to console as it's collected
+            print(datajson)
+            
+            #store the tweet data in a collection
+            db['tweets'].insert(datajson)
+
         except BaseException as e:
-            print('Error on data: %s' %str(e))
+           print(e)
         return True
 
     def on_error(self, status_code):
@@ -30,16 +43,13 @@ class TwitterListener(tweepy.StreamListener):
             return False
         print(status_code)
 
-    def store(self,data):
-        t=json.loads(data)
-        return t
 
 
 
 class Streamer():
     def __init__(self):
         self.authenticator = Authenticator()
-    def stream_tweets(self, fetched_tweets_filename, hash_tag_list, mining_time):
+    def stream_tweets(self, hash_tag_list, mining_time):
         auth = self.authenticator.authenticate_twitter()
         listener = TwitterListener(api=tweepy.API(auth, wait_on_rate_limit=True,wait_on_rate_limit_notify=True,parser=tweepy.parsers.JSONParser()))
         stream = tweepy.Stream(auth,  listener)
@@ -50,10 +60,11 @@ class Streamer():
 
 
 if __name__ == '__main__':
-    # hash_tag_list = ["nba",'raptors','lakers','warriors','bucks','stephen curry','lebron james']
-    hash_tag_list = ['coronavirus']
-    fetched_tweets_filename = "tweets_streaming.json"
-    mining_time = 10
 
+    #select the keyword by which you want to query Twitter data
+    hash_tag_list = ['coronavirus']
+
+    #select for how long in seconds to mine
+    mining_time = 10
     streamer = Streamer()
-    streamer.stream_tweets(fetched_tweets_filename, hash_tag_list, mining_time)
+    streamer.stream_tweets(hash_tag_list, mining_time)
