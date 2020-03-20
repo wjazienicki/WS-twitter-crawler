@@ -66,5 +66,7 @@ if __name__ == '__main__':
 
     #select for how long in seconds to mine
     mining_time = 10
+
+    
     streamer = Streamer()
     streamer.stream_tweets(hash_tag_list, mining_time)
