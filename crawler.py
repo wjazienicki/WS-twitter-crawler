@@ -19,10 +19,14 @@ class TwitterListener(tweepy.StreamListener):
     def on_data(self, data):
         try:
             #connect to MongoDB
+
+            #MODIFY THIS WItH URI TO YOUR DATABASE SERVER
             client = pymongo.MongoClient("mongodb://localhost:27017/")
 
             #use database
-            db = client["AE"]
+
+            #MODIFY THIS WITH NAME OF YOUR DESIGNATED DATABASE
+            db = client["<PLACEHOLDER>"]
 
             #decode the json data from twitter
             datajson = json.loads(data)
@@ -31,7 +35,9 @@ class TwitterListener(tweepy.StreamListener):
             print(datajson)
             
             #store the tweet data in a collection
-            db['tweets'].insert(datajson)
+
+            #MODIFY THIS WITH NAME OF YOUR COLLECTION IN DATABASE
+            db['<PLACEHOLDER>'].insert(datajson)
 
         except BaseException as e:
            print(e)
@@ -62,11 +68,15 @@ class Streamer():
 if __name__ == '__main__':
 
     #select the keyword by which you want to query Twitter data
+
+    #MODIFY THIS VARIABLE TO CHANGE LIST OF KEYWORDS BY WHICH TWEETS WILL BE FILTERED
     hash_tag_list = ['coronavirus']
 
     #select for how long in seconds to mine
+
+    #MODIFY THIS VARIABLE TO CHANGE TIME AFTER WHICH MINING WILL STOP
     mining_time = 10
 
-    
+
     streamer = Streamer()
     streamer.stream_tweets(hash_tag_list, mining_time)

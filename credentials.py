@@ -1,4 +1,8 @@
-ACCESS_TOKEN = "1228813113421713414-0104RHxL36nZeHUAy92pgR0raXckct"
-ACCESS_TOKEN_SECRET = "InbEiyVXjPKmx0iwG1nU3HHNQalMYWjUKFX7fFmukssPm"
-CONSUMER_KEY = "U2Ab9FBrtpwaln0ZEWXJwWcfn"
-CONSUMER_KEY_SECRET = "5GEw9YruwtbxHEoKYYkqXnrMGlgt7Cg522q67xDrl5gLR3bGNI"
+"""
+In order to run the app, you need to input your private keys and tokens found on your Twitter Dev profile
+"""
+
+ACCESS_TOKEN = "<PLACEHOLDER>"
+ACCESS_TOKEN_SECRET = "<PLACEHOLDER>"
+CONSUMER_KEY = "<PLACEHOLDER>"
+CONSUMER_KEY_SECRET = "<PLACEHOLDER>"
